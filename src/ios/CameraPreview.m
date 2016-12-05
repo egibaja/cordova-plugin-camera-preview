@@ -266,14 +266,14 @@
 
                          // task 1
                          UIImage *previewUIImage = [[UIImage alloc]initWithCGImage:previewImage];
-                         NSData *previewData = UIImageJPEGRepresentation(previewUIImage, 0.5);
+                         NSData *previewData = UIImageJPEGRepresentation(previewUIImage, 1.0f);
                          previewPicturePath = [NSString stringWithFormat:@"data:image/jpeg;base64,%@", previewData.base64Encoding];
                          NSLog(@"previewPicturePath: %@", previewPicturePath);
                     
                      
                          //task 2
                          UIImage *finalUIImage = [[UIImage alloc]initWithCGImage:finalImage];
-                         NSData *picturePath = UIImageJPEGRepresentation(finalUIImage, 0.5);
+                         NSData *picturePath = UIImageJPEGRepresentation(finalUIImage, 1.0f);
                          originalPicturePath = [NSString stringWithFormat:@"data:image/jpeg;base64,%@", picturePath.base64Encoding];
                          NSLog(@"originalPicturePath: %@", originalPicturePath);
                      
