@@ -13,6 +13,7 @@ import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
@@ -419,10 +420,10 @@ public class CameraActivity extends Fragment {
 		    public void run() {
 
 			    try {
-				    final File picFile = storeImage(picture, "_preview");
-				    final File originalPictureFile = storeImage(originalPicture, "_original");
-
-					eventListener.onPictureTaken(originalPictureFile.getAbsolutePath(), picFile.getAbsolutePath());
+				    final String picFile = base64JPEG(picture);
+				    final String originalPictureFile = base64JPEG(originalPicture);
+            
+					  eventListener.onPictureTaken(originalPictureFile, picFile);
 
 				    getActivity().runOnUiThread(new Runnable() {
 					    @Override
@@ -444,6 +445,14 @@ public class CameraActivity extends Fragment {
 			    }
 		    }
 	    }.start();
+    }
+
+    private String base64JPEG(Bitmap image) {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      image.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+      byte[] b = baos.toByteArray();
+      String imageEncoded = Base64.encodeToString(b,Base64.DEFAULT);
+      return "data:image/jpeg;base64," + imageEncoded;
     }
 
     private File getOutputMediaFile(String suffix){
