@@ -37,6 +37,7 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
     public static final int PERMISSION_DENIED_ERROR = 20;
 
     public CallbackContext callbackContext;
+    public JSONArray args;
 
     protected final static String[] permissions = {
         Manifest.permission.CAMERA,
