@@ -58,24 +58,29 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
         this.args = args;
 
         if (setOnPictureTakenHandlerAction.equals(action)){
+            Log.e(TAG, "setOnPictureTakenHandlerAction");
             return setOnPictureTakenHandler(args, callbackContext);
         }
         else if (startCameraAction.equals(action)){
+            Log.e(TAG, "startCameraAction");
             return callStartCamera(args, callbackContext);
         }
         else if (takePictureAction.equals(action)){
+            Log.e(TAG, "takePictureAction");
             return takePicture(args, callbackContext);
         }
         else if (setColorEffectAction.equals(action)){
           return setColorEffect(args, callbackContext);
         }
         else if (stopCameraAction.equals(action)){
+            Log.e(TAG, "stopCameraAction");
             return stopCamera(args, callbackContext);
         }
         else if (hideCameraAction.equals(action)){
             return hideCamera(args, callbackContext);
         }
         else if (showCameraAction.equals(action)){
+            Log.e(TAG, "showCameraAction");
             return showCamera(args, callbackContext);
         }
         else if (switchCameraAction.equals(action)){
@@ -88,16 +93,19 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
     public void onRequestPermissionResult(int requestCode, String[] permissions,
                                           int[] grantResults) throws JSONException
     {
+        Log.e(TAG, "onRequestPermissionResult");
         for(int r:grantResults)
         {
             if(r == PackageManager.PERMISSION_DENIED)
             {
                 this.callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, PERMISSION_DENIED_ERROR));
+                Log.e(TAG, "creo que PERMISSION_DENIED_ERROR");
                 return;
             }
         }
         switch (requestCode) {
             case START_CAMERA_SEC:
+                Log.e(TAG, "case START_CAMERA_SEC");
                 callStartCamera(this.args, this.callbackContext);
                 break;
         }
@@ -105,6 +113,7 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
     }
 
     public boolean callStartCamera(final JSONArray args, CallbackContext callbackContext) {
+        Log.e(TAG, "Dentro de callStartCamera");
         boolean saveAlbumPermission = PermissionHelper.hasPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
         boolean startCameraPermission = PermissionHelper.hasPermission(this, Manifest.permission.CAMERA);
 
@@ -126,7 +135,7 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
                 // never be caught
             }
         }
-
+        Log.e(TAG, "Comprobando permisos");
         if (startCameraPermission && saveAlbumPermission) {
             return startCamera(args, callbackContext);
         } else if (saveAlbumPermission && !startCameraPermission) {
@@ -141,6 +150,7 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
     }
 
     private boolean startCamera(final JSONArray args, CallbackContext callbackContext) {
+        Log.e(TAG, "Dentro de startCamera");
         if(fragment != null){
             return false;
         }
