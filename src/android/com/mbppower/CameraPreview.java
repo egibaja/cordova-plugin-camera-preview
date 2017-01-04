@@ -97,7 +97,7 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
         }
         switch (requestCode) {
             case START_CAMERA_SEC:
-                callStartCamera(args, this.callbackContext);
+                callStartCamera(this.args, this.callbackContext);
                 break;
         }
 
