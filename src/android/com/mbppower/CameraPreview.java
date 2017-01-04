@@ -54,6 +54,7 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
 
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         this.callbackContext = callbackContext;
+        this.args = args;
 
         if (setOnPictureTakenHandlerAction.equals(action)){
             return setOnPictureTakenHandler(args, callbackContext);
@@ -94,6 +95,12 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
                 return;
             }
         }
+        switch (requestCode) {
+            case START_CAMERA_SEC:
+                callStartCamera(args, this.callbackContext);
+                break;
+        }
+
     }
 
     public boolean callStartCamera(final JSONArray args, CallbackContext callbackContext) {
