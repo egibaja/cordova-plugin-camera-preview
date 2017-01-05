@@ -353,7 +353,8 @@ public class CameraActivity extends Fragment {
 							//scale down
 							float scale = (float)pictureView.getWidth()/(float)pic.getWidth();
 							Bitmap scaledBitmap = Bitmap.createScaledBitmap(pic, (int)(pic.getWidth()*scale), (int)(pic.getHeight()*scale), false);
-
+							Log.e(TAG, "original image size " + (int)(pic.getWidth()) + "x" + (int)(pic.getHeight()));
+							Log.e(TAG, "after first scaled " + (int)(pic.getWidth()*scale) + "x" + (int)(pic.getHeight()*scale));
 							final Matrix matrix = new Matrix();
 							if (cameraCurrentlyLocked == Camera.CameraInfo.CAMERA_FACING_FRONT) {
 								Log.d(TAG, "mirror y axis");
@@ -381,6 +382,7 @@ public class CameraActivity extends Fragment {
 
 									//scale final picture
 									if(shouldScaleWidth || shouldScaleHeight){
+										Log.e(TAG, "rotando ");
 										double scaleHeight = shouldScaleHeight ? maxHeight / (double)rotatedHeight : 1;
 										double scaleWidth = shouldScaleWidth ? maxWidth / (double)rotatedWidth : 1;
 
@@ -392,11 +394,11 @@ public class CameraActivity extends Fragment {
 									}
 
 									Bitmap originalPicture = Bitmap.createBitmap(finalPic, 0, 0, (int)(finalPic.getWidth()), (int)(finalPic.getHeight()), matrix, false);
-
+									Log.e(TAG, "size original " + (int)(finalPic.getWidth()) + "x" + (int)(finalPic.getHeight()));
 								    //get bitmap and compress
 								    Bitmap picture = loadBitmapFromView(view.findViewById(getResources().getIdentifier("frame_camera_cont", "id", appResourcesPackage)));
 								    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-								    picture.compress(Bitmap.CompressFormat.PNG, 80, stream);
+								    //picture.compress(Bitmap.CompressFormat.PNG, 80, stream);
 
 									generatePictureFromView(originalPicture, picture);
 									canTakePicture = true;
@@ -449,7 +451,7 @@ public class CameraActivity extends Fragment {
 
     private String base64JPEG(Bitmap image) {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      image.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+      image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
       byte[] b = baos.toByteArray();
       String imageEncoded = Base64.encodeToString(b,Base64.DEFAULT);
       return "data:image/jpeg;base64," + imageEncoded;
