@@ -9,6 +9,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.graphics.PixelFormat;
 
 import org.apache.cordova.PermissionHelper;
 import org.apache.cordova.CallbackContext;
@@ -20,6 +21,8 @@ import android.content.pm.PackageManager.NameNotFoundException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+
+import java.util.List;
 
 public class CameraPreview extends CordovaPlugin implements CameraActivity.CameraListener {
 
@@ -139,7 +142,7 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
                     fragment.setRect(x, y, width, height);
 
                     Camera.Parameters params = fragment.getParameters(); 
-                    List<Camera.Size> sizes = parameters.getSupportedPictureSizes();
+                    List<Camera.Size> sizes = params.getSupportedPictureSizes();
                     //searches for good picture quality
                     Camera.Size bestDimens = null;
                     for(Camera.Size dimens : sizes){
@@ -149,10 +152,10 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
                             }
                         }
                     }
-                    parameters.set("jpeg-quality", 90);
-                    parameters.setPictureFormat(PixelFormat.JPEG);
-                    parameters.setPictureSize(bestDimens.width, bestDimens.height);
-                    fragment.setParameters(parameters);
+                    params.set("jpeg-quality", 90);
+                    params.setPictureFormat(PixelFormat.JPEG);
+                    params.setPictureSize(bestDimens.width, bestDimens.height);
+                    fragment.setParameters(params);
 
 
 
