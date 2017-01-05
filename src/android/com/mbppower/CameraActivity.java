@@ -319,7 +319,7 @@ public class CameraActivity extends Fragment {
       }
     }
 
-    public void getCameraParameters(Camera.Parameters params) {
+    public Camera.Parameters getCameraParameters() {
       if (mCamera != null) {
         Camera.Parameters params = mCamera.getParameters();
         return params;
