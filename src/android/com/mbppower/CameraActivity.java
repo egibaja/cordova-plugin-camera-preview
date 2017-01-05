@@ -105,7 +105,7 @@ public class CameraActivity extends Fragment {
 	        //set box position and size
 	        Log.e(TAG, "fragment layout " + width + "x" + height);
 	        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(width, height);
-	        Log.e(TAG, "margenes del layout layout " + width + "x" + height);
+	        Log.e(TAG, "margenes del layout layout " + x + "x" + y);
 	        layoutParams.setMargins(x, y, 0, 0);
 	        frameContainerLayout = (FrameLayout) view.findViewById(getResources().getIdentifier("frame_container", "id", appResourcesPackage));
 	        frameContainerLayout.setLayoutParams(layoutParams);
@@ -330,7 +330,82 @@ public class CameraActivity extends Fragment {
         canvas.drawBitmap(bitmap, -rect.left, -rect.top, null);
         return ret;
     }
+
+
+    void takePicture(final int maxWidth, final int maxHeight) {
+        Log.d(TAG, "takePicture");
+        if (mPreview != null) {
+            if (!canTakePicture)
+                return;
+
+            canTakePicture = false;
+
+            PictureCallback mPicture = new PictureCallback() {
+                @Override
+                public void onPictureTaken(byte[] data, Camera camera) {
+
+                	final Bitmap pic = BitmapFactory.decodeByteArray(data, 0, data.length);
+					//scale down
+					Log.e(TAG, "original image size " + (int)(pic.getWidth()) + "x" + (int)(pic.getHeight()));
+					final Matrix matrix = new Matrix();
+					if (cameraCurrentlyLocked == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+						Log.d(TAG, "mirror y axis");
+						matrix.preScale(-1.0f, 1.0f);
+					}
+					Log.d(TAG, "preRotate " + mPreview.getDisplayOrientation() + "deg");
+					matrix.postRotate(mPreview.getDisplayOrientation());
+					Bitmap originalPicture = Bitmap.createBitmap(pic, 0, 0, (int)(pic.getWidth()), (int)(pic.getHeight()), matrix, false);
+					generatePictureFromBitmap(originalPicture);
+                    canTakePicture = true;
+                    return;
+                }
+            };
+            Log.d(TAG, "calling original takePicture done");
+            mCamera.takePicture(null, null, mPicture);
+        } else {
+            canTakePicture = true;
+        }
+    }
+
+
+    private void generatePictureFromBitmap(final Bitmap originalPicture){
+
+	    final FrameLayout cameraLoader = (FrameLayout)view.findViewById(getResources().getIdentifier("camera_loader", "id", appResourcesPackage));
+	    cameraLoader.setVisibility(View.VISIBLE);
+	    final ImageView pictureView = (ImageView) view.findViewById(getResources().getIdentifier("picture_view", "id", appResourcesPackage));
+	    new Thread() {
+		    public void run() {
+
+			    try {
+				    final String originalPictureFile = base64JPEG(originalPicture);
+            
+					eventListener.onPictureTaken(originalPictureFile);
+
+				    getActivity().runOnUiThread(new Runnable() {
+					    @Override
+					    public void run() {
+				            cameraLoader.setVisibility(View.INVISIBLE);
+						    pictureView.setImageBitmap(null);
+					    }
+				    });
+			    }
+			    catch(Exception e){
+				    //An unexpected error occurred while saving the picture.
+				    Log.e(TAG, "An error ocurred generating the picture from the Bitmap");
+				    eventListener.onPictureTaken(null);
+				    getActivity().runOnUiThread(new Runnable() {
+					    @Override
+					    public void run() {
+				            cameraLoader.setVisibility(View.INVISIBLE);
+						    pictureView.setImageBitmap(null);
+					    }
+				    });
+			    }
+		    }
+	    }.start();
+    }
 	
+	/*
 	public void takePicture(final double maxWidth, final double maxHeight){
 		final ImageView pictureView = (ImageView) view.findViewById(getResources().getIdentifier("picture_view", "id", appResourcesPackage));
 		if(mPreview != null) {
@@ -411,6 +486,10 @@ public class CameraActivity extends Fragment {
 			canTakePicture = true;
 		}
 	}
+
+
+
+
     private void generatePictureFromView(final Bitmap originalPicture, final Bitmap picture){
 
 	    final FrameLayout cameraLoader = (FrameLayout)view.findViewById(getResources().getIdentifier("camera_loader", "id", appResourcesPackage));
@@ -446,6 +525,7 @@ public class CameraActivity extends Fragment {
 		    }
 	    }.start();
     }
+  */
 
     private String base64JPEG(Bitmap image) {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
