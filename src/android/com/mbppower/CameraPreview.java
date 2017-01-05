@@ -21,7 +21,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-public class CameraPreview extends CordovaPlugin implements CameraActivity.CameraPreviewListener {
+public class CameraPreview extends CordovaPlugin implements CameraActivity.CameraListener {
 
     private final String TAG = "CameraPreview";
     private final String setOnPictureTakenHandlerAction = "setOnPictureTakenHandler";
@@ -191,9 +191,9 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
         return true;
     }
 
-    public void onPictureTaken(String originalPicturePath, String previewPicturePath){
+    public void onPictureTaken(String originalPicturePath){
         JSONArray data = new JSONArray();
-        data.put(originalPicturePath).put(previewPicturePath);
+        data.put(originalPicturePath).put(null);
         PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, data);
         pluginResult.setKeepCallback(true);
         takePictureCallbackContext.sendPluginResult(pluginResult);

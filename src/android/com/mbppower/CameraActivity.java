@@ -43,11 +43,11 @@ import java.util.List;
 
 public class CameraActivity extends Fragment {
 
-	public interface CameraPreviewListener {
-		public void onPictureTaken(String originalPicturePath, String previewPicturePath);
+	public interface CameraListener {
+		public void onPictureTaken(String originalPicturePath);
 	}
 
-	private CameraPreviewListener eventListener;
+	private CameraListener eventListener;
 	private static final String TAG = "CameraActivity";
 	public FrameLayout mainLayout;
 	public FrameLayout frameContainerLayout;
@@ -72,7 +72,7 @@ public class CameraActivity extends Fragment {
 	public int x;
 	public int y;
 
-	public void setEventListener(CameraPreviewListener listener){
+	public void setEventListener(CameraListener listener){
 		eventListener = listener;
 	}
 
