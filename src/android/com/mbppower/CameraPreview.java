@@ -190,7 +190,7 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
                 }
             }
         }
-        params.set("jpeg-quality", 100);
+        params.set("jpeg-quality", 90);
         params.setPictureFormat(PixelFormat.JPEG);
         params.setPictureSize(bestDimens.width, bestDimens.height);
         fragment.setCameraParameters(params);
