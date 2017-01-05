@@ -324,6 +324,7 @@ public class CameraActivity extends Fragment {
         Camera.Parameters params = mCamera.getParameters();
         return params;
       }
+      return null;
     }
 
     public boolean hasFrontCamera(){
