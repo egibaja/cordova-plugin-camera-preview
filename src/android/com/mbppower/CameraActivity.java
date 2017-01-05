@@ -103,7 +103,9 @@ public class CameraActivity extends Fragment {
             setDefaultCameraId();
 
 	        //set box position and size
+	        Log.e(TAG, "fragment layout " + width + "x" + height);
 	        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(width, height);
+	        Log.e(TAG, "margenes del layout layout " + width + "x" + height);
 	        layoutParams.setMargins(x, y, 0, 0);
 	        frameContainerLayout = (FrameLayout) view.findViewById(getResources().getIdentifier("frame_container", "id", appResourcesPackage));
 	        frameContainerLayout.setLayoutParams(layoutParams);
@@ -337,6 +339,7 @@ public class CameraActivity extends Fragment {
 				return;
 			
 			canTakePicture = false;
+			Log.e(TAG, "Al llegar a takePicture en activity las dimensiones son " + (int)(maxWidth) + "x" + (int)(maxHeight));
 
 			mPreview.setOneShotPreviewCallback(new Camera.PreviewCallback() {
 
@@ -351,10 +354,7 @@ public class CameraActivity extends Fragment {
 							final Bitmap pic = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
 							//scale down
-							float scale = (float)pictureView.getWidth()/(float)pic.getWidth();
-							Bitmap scaledBitmap = Bitmap.createScaledBitmap(pic, (int)(pic.getWidth()*scale), (int)(pic.getHeight()*scale), false);
 							Log.e(TAG, "original image size " + (int)(pic.getWidth()) + "x" + (int)(pic.getHeight()));
-							Log.e(TAG, "after first scaled " + (int)(pic.getWidth()*scale) + "x" + (int)(pic.getHeight()*scale));
 							final Matrix matrix = new Matrix();
 							if (cameraCurrentlyLocked == Camera.CameraInfo.CAMERA_FACING_FRONT) {
 								Log.d(TAG, "mirror y axis");
@@ -363,13 +363,11 @@ public class CameraActivity extends Fragment {
 							Log.d(TAG, "preRotate " + mPreview.getDisplayOrientation() + "deg");
 							matrix.postRotate(mPreview.getDisplayOrientation());
 
-							final Bitmap fixedPic = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, false);
 							final Rect rect = new Rect(mPreview.mSurfaceView.getLeft(), mPreview.mSurfaceView.getTop(), mPreview.mSurfaceView.getRight(), mPreview.mSurfaceView.getBottom());
 
 							getActivity().runOnUiThread(new Runnable() {
 								@Override
 								public void run() {
-									pictureView.setImageBitmap(fixedPic);
 									pictureView.layout(rect.left, rect.top, rect.right, rect.bottom);
 
 									Bitmap finalPic = null;

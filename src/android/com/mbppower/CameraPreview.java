@@ -181,6 +181,7 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
         try {
             double maxWidth = args.getDouble(0);
             double maxHeight = args.getDouble(1);
+            Log.d(TAG, "en takePicture en preview las dimensiones son " + (int)Math.floor(maxWidth) + "x" + (int)Math.floor(maxHeight));
             fragment.takePicture((int)Math.floor(maxWidth), (int)Math.floor(maxHeight));
         }
         catch(Exception e){
