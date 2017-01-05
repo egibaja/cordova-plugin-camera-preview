@@ -33,16 +33,11 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
     private final String showCameraAction = "showCamera";
     private final String hideCameraAction = "hideCamera";
 
-    public static final int START_CAMERA_SEC = 0;
-    public static final int PERMISSION_DENIED_ERROR = 20;
+    protected final String permission = Manifest.permission.CAMERA;
+    private final int permissionsReqId = 0;
+    private CallbackContext execCallback;
+    private JSONArray execArgs;
 
-    public CallbackContext callbackContext;
-    public JSONArray args;
-
-    protected final static String[] permissions = {
-        Manifest.permission.CAMERA,
-        Manifest.permission.READ_EXTERNAL_STORAGE
-    };
 
     private CameraActivity fragment;
     private CallbackContext takePictureCallbackContext;
@@ -54,8 +49,6 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
     }
 
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-        this.callbackContext = callbackContext;
-        this.args = args;
 
         if (setOnPictureTakenHandlerAction.equals(action)){
             Log.e(TAG, "setOnPictureTakenHandlerAction");
@@ -63,7 +56,15 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
         }
         else if (startCameraAction.equals(action)){
             Log.e(TAG, "startCameraAction");
-            return callStartCamera(args, callbackContext);
+            execCallback = callbackContext;
+            execArgs = args;
+            if (cordova.hasPermission(permission)) {
+              return startCamera(args, callbackContext);
+            }
+            else {
+              cordova.requestPermission(this, permissionsReqId, permission);
+              return true;
+            }
         }
         else if (takePictureAction.equals(action)){
             Log.e(TAG, "takePictureAction");
@@ -93,61 +94,21 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
     public void onRequestPermissionResult(int requestCode, String[] permissions,
                                           int[] grantResults) throws JSONException
     {
-        Log.e(TAG, "onRequestPermissionResult");
         for(int r:grantResults)
-        {
-            if(r == PackageManager.PERMISSION_DENIED)
             {
-                this.callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, PERMISSION_DENIED_ERROR));
-                Log.e(TAG, "creo que PERMISSION_DENIED_ERROR");
+              if(r == PackageManager.PERMISSION_DENIED)
+              {
+                execCallback.sendPluginResult(new PluginResult(PluginResult.Status.ILLEGAL_ACCESS_EXCEPTION));
+                execCallback = null;
                 return;
+              }
             }
-        }
-        switch (requestCode) {
-            case START_CAMERA_SEC:
-                Log.e(TAG, "case START_CAMERA_SEC");
-                callStartCamera(this.args, this.callbackContext);
-                break;
-        }
+            if (requestCode == permissionsReqId) {
+              startCamera(execArgs, execCallback);
+            }
 
     }
 
-    public boolean callStartCamera(final JSONArray args, CallbackContext callbackContext) {
-        Log.e(TAG, "Dentro de callStartCamera");
-        boolean saveAlbumPermission = PermissionHelper.hasPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-        boolean startCameraPermission = PermissionHelper.hasPermission(this, Manifest.permission.CAMERA);
-
-        if(!startCameraPermission) {
-            startCameraPermission = true;
-            try {
-                PackageManager packageManager = this.cordova.getActivity().getPackageManager();
-                String[] permissionsInPackage = packageManager.getPackageInfo(this.cordova.getActivity().getPackageName(), PackageManager.GET_PERMISSIONS).requestedPermissions;
-                if (permissionsInPackage != null) {
-                    for (String permission : permissionsInPackage) {
-                        if (permission.equals(Manifest.permission.CAMERA)) {
-                            startCameraPermission = false;
-                            break;
-                        }
-                    }
-                }
-            } catch (NameNotFoundException e) {
-                // We are requesting the info for our package, so this should
-                // never be caught
-            }
-        }
-        Log.e(TAG, "Comprobando permisos");
-        if (startCameraPermission && saveAlbumPermission) {
-            return startCamera(args, callbackContext);
-        } else if (saveAlbumPermission && !startCameraPermission) {
-            PermissionHelper.requestPermission(this, START_CAMERA_SEC, Manifest.permission.CAMERA);
-        } else if (!saveAlbumPermission && startCameraPermission) {
-            PermissionHelper.requestPermission(this, START_CAMERA_SEC, Manifest.permission.READ_EXTERNAL_STORAGE);
-        } else {
-            PermissionHelper.requestPermissions(this, START_CAMERA_SEC, permissions);
-        }
-
-        return false;
-    }
 
     private boolean startCamera(final JSONArray args, CallbackContext callbackContext) {
         Log.e(TAG, "Dentro de startCamera");
