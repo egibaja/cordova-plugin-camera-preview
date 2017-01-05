@@ -141,24 +141,6 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
                     fragment.dragEnabled = dragEnabled;
                     fragment.setRect(x, y, width, height);
 
-                    Camera.Parameters params = fragment.getCameraParameters(); 
-                    List<Camera.Size> sizes = params.getSupportedPictureSizes();
-                    //searches for good picture quality
-                    Camera.Size bestDimens = null;
-                    for(Camera.Size dimens : sizes){
-                        if(dimens.width  <= 1200 && dimens.height <= 1920){
-                            if (bestDimens == null || (dimens.width > bestDimens.width && dimens.height > bestDimens.height)) {
-                                bestDimens = dimens;
-                            }
-                        }
-                    }
-                    params.set("jpeg-quality", 90);
-                    params.setPictureFormat(PixelFormat.JPEG);
-                    params.setPictureSize(bestDimens.width, bestDimens.height);
-                    fragment.setCameraParameters(params);
-
-
-
                     //create or update the layout params for the container view
                     FrameLayout containerView = (FrameLayout)cordova.getActivity().findViewById(containerViewId);
                     if(containerView == null){
@@ -196,6 +178,23 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
         if(fragment == null){
             return false;
         }
+
+        Camera.Parameters params = fragment.getCameraParameters(); 
+        List<Camera.Size> sizes = params.getSupportedPictureSizes();
+        //searches for good picture quality
+        Camera.Size bestDimens = null;
+        for(Camera.Size dimens : sizes){
+            if(dimens.width  <= 1200 && dimens.height <= 1920){
+                if (bestDimens == null || (dimens.width > bestDimens.width && dimens.height > bestDimens.height)) {
+                    bestDimens = dimens;
+                }
+            }
+        }
+        params.set("jpeg-quality", 90);
+        params.setPictureFormat(PixelFormat.JPEG);
+        params.setPictureSize(bestDimens.width, bestDimens.height);
+        fragment.setCameraParameters(params);
+
         PluginResult pluginResult = new PluginResult(PluginResult.Status.OK);
         pluginResult.setKeepCallback(true);
         callbackContext.sendPluginResult(pluginResult);
