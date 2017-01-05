@@ -141,7 +141,7 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
                     fragment.dragEnabled = dragEnabled;
                     fragment.setRect(x, y, width, height);
 
-                    Camera.Parameters params = fragment.getParameters(); 
+                    Camera.Parameters params = fragment.getCameraParameters(); 
                     List<Camera.Size> sizes = params.getSupportedPictureSizes();
                     //searches for good picture quality
                     Camera.Size bestDimens = null;
@@ -155,7 +155,7 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
                     params.set("jpeg-quality", 90);
                     params.setPictureFormat(PixelFormat.JPEG);
                     params.setPictureSize(bestDimens.width, bestDimens.height);
-                    fragment.setParameters(params);
+                    fragment.setCameraParameters(params);
 
 
 

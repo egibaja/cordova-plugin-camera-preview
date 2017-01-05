@@ -319,6 +319,13 @@ public class CameraActivity extends Fragment {
       }
     }
 
+    public void getCameraParameters(Camera.Parameters params) {
+      if (mCamera != null) {
+        Camera.Parameters params = mCamera.getParameters();
+        return params;
+      }
+    }
+
     public boolean hasFrontCamera(){
         return getActivity().getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT);
     }
