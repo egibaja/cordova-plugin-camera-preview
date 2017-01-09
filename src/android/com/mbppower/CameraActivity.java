@@ -386,7 +386,7 @@ public class CameraActivity extends Fragment {
 		    public void run() {
 
 			    try {
-				    final String originalPictureFile = base64PNG(originalPicture);
+				    final String originalPictureFile = base64JPEG(originalPicture);
             
 					eventListener.onPictureTaken(originalPictureFile);
 
@@ -546,7 +546,7 @@ public class CameraActivity extends Fragment {
 
     private String base64JPEG(Bitmap image) {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+      image.compress(Bitmap.CompressFormat.JPEG, 80, baos);
       byte[] b = baos.toByteArray();
       String imageEncoded = Base64.encodeToString(b,Base64.DEFAULT);
       return "data:image/jpeg;base64," + imageEncoded;
