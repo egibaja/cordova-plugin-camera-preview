@@ -184,7 +184,7 @@ public class CameraPreview extends CordovaPlugin implements CameraActivity.Camer
         //searches for good picture quality
         Camera.Size bestDimens = null;
         for(Camera.Size dimens : sizes){
-            if(dimens.width  <= 1920 && dimens.height <= 1920){
+            if(dimens.width  <= 1280 && dimens.height <= 1280){
                 if (bestDimens == null || (dimens.width > bestDimens.width && dimens.height > bestDimens.height)) {
                     bestDimens = dimens;
                 }
