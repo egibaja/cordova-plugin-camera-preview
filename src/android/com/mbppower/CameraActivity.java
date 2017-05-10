@@ -363,7 +363,10 @@ public class CameraActivity extends Fragment {
 					}
 					Log.d(TAG, "preRotate " + mPreview.getDisplayOrientation() + "deg");
 					matrix.postRotate(mPreview.getDisplayOrientation());
-					Bitmap originalPicture = Bitmap.createBitmap(pic, 0, 0, (int)(pic.getWidth()), (int)(pic.getHeight()), matrix, false);
+					// tener en cuenta que la imagen está rotada para cropear
+					int marginLR = (17 * pic.getWidth()) / 100;
+					int marginT = (5 * pic.getHeight()) / 100;
+					Bitmap originalPicture = Bitmap.createBitmap(pic, marginLR, marginT, (int)(pic.getWidth()) -  (int)(1.5 * marginLR), (int)(pic.getHeight()) - (2 * marginT), matrix, false);
 					generatePictureFromBitmap(originalPicture);
                     canTakePicture = true;
                     return;
